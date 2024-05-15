@@ -9,12 +9,13 @@ export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.NEXTAUTH_SECRET
+      clientSecret: process.env.NEXTAUTH_SECRET,
     }),
   ],
   adapter: MongoDBAdapter(clientPromise),
   callbacks: {
     session: async ({ session, token, user }) => {
+      console.log('Session callback:', session);
       if (adminEmails.includes(session?.user?.email)) {
         return session;
       } else {
@@ -23,9 +24,19 @@ export const authOptions = {
     },
   },
   session: {
-    // Customize session expiration here
     maxAge: 24 * 60 * 60, // 1 day in seconds
     updateAge: 12 * 60 * 60, // 12 hours in seconds
+  },
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+      },
+    },
   },
 };
 
