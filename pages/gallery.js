@@ -24,13 +24,13 @@ export default function Gallery() {
 
     return (
         <Layout>
-            <div className="grid grid-cols-5 gap-4 p-4">
+            <div className="p-4">
                 {images.map((image, index) => (
-                    <div key={index} className="relative overflow-hidden border border-gray-300 rounded-lg">
+                    <div key={index} className="inline-block relative mr-4 mb-4">
                         <img 
                             src={image} 
                             alt="Image" 
-                            className="w-full h-auto object-cover rounded-lg"
+                            className="w-40 h-40 object-cover rounded-lg"
                         />
                         <button 
                             onClick={() => deleteImage(image)}
