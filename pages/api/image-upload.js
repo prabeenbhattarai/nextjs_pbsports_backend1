@@ -1,49 +1,54 @@
-import nextConnect from 'next-connect';
-import multer from 'multer';
-import { v4 as uuidv4 } from 'uuid';
-import path from 'path';
+import multiparty from "multiparty";
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import fs from 'fs';
+import mime from 'mime-types';
+import { mongooseConnect } from "@/lib/mongoose";
+import { isAdminRequest } from "../auth/[...nextauth]";
 
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: './public/uploads',
-        filename: (req, file, cb) => cb(null, `${uuidv4()}${path.extname(file.originalname)}`)
-    })
-});
+const bucketName = 'pbsports';
+const pub = 'pub-286a1a3ce1784237a33c76a3f5cf95d3';
 
-const apiRoute = nextConnect({
-    onError(error, req, res) {
-        res.status(501).json({ error: `Something went wrong! ${error.message}` });
-    },
-    onNoMatch(req, res) {
-        res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
-    },
-});
+export default async function handle(req, res) {
+  await mongooseConnect();
+  await isAdminRequest(req, res);
 
-apiRoute.use(upload.array('file'));
-
-apiRoute.post((req, res) => {
-    const uploadedFiles = req.files.map(file => `/uploads/${file.filename}`);
-    res.status(200).json({ links: uploadedFiles });
-});
-
-apiRoute.delete((req, res) => {
-    const { url } = req.body;
-    const filePath = path.join(process.cwd(), 'public', url);
-
-    fs.unlink(filePath, (err) => {
-        if (err) {
-            res.status(500).json({ error: 'Failed to delete image' });
-            return;
-        }
-        res.status(200).json({ message: 'Image deleted successfully' });
+  const form = new multiparty.Form();
+  const { fields, files } = await new Promise((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      resolve({ fields, files });
     });
-});
+  });
 
-export default apiRoute;
+  console.log('length:', files.file.length);
+
+  const pbsports = new S3Client({
+    endpoint: `https://${process.env.ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    region: 'auto',
+    credentials: {
+      accessKeyId: process.env.S3_ACCESS_KEY,
+      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    },
+  });
+
+  const links = [];
+  for (const file of files.file) {
+    const ext = file.originalFilename.split('.').pop();
+    const newFilename = Date.now() + '.' + ext;
+    await pbsports.send(new PutObjectCommand({
+      Bucket: bucketName,
+      Key: newFilename,
+      Body: fs.readFileSync(file.path),
+      ACL: 'public-read',
+      ContentType: mime.lookup(file.path),
+    }));
+    const link = `https://${pub}.r2.dev/${newFilename}`;
+    links.push(link);
+  }
+
+  return res.json({ links });
+}
 
 export const config = {
-    api: {
-        bodyParser: false,
-    },
+  api: { bodyParser: false },
 };
