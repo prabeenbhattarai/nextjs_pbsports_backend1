@@ -16,20 +16,23 @@ export default function ImageUploadForm() {
             for (const file of files) {
                 data.append('file', file);
             }
-            const res = await axios.post('/api/upload', data);
+            const res = await axios.post('/api/image-upload', data);
             setImages(oldImages => [...oldImages, ...res.data.links]);
             setIsUploading(false);
         }
     }
 
-    function updateImagesOrder(images) {
-        setImages(images);
+    async function deleteImage(image) {
+        try {
+            await axios.delete('/api/image-upload', { data: { url: image } });
+            setImages(images.filter(img => img !== image));
+        } catch (error) {
+            console.error('Failed to delete image:', error);
+        }
     }
 
-    function deleteImage(image) {
-        setImages(images.filter(img => img !== image));
-        // Optionally, delete the image from the server here if needed
-        // await axios.delete('/api/upload', { data: { url: image } });
+    function updateImagesOrder(images) {
+        setImages(images);
     }
 
     return (
