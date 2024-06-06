@@ -3,7 +3,7 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import fs from 'fs';
 import mime from 'mime-types';
 import { mongooseConnect } from "@/lib/mongoose";
-import { isAdminRequest } from "../auth/[...nextauth]";
+import { isAdminRequest } from "./auth/[...nextauth]";
 
 const bucketName = 'pbsports';
 const pub = 'pub-286a1a3ce1784237a33c76a3f5cf95d3';
@@ -34,7 +34,7 @@ export default async function handle(req, res) {
   const links = [];
   for (const file of files.file) {
     const ext = file.originalFilename.split('.').pop();
-    const newFilename = Date.now() + '.' + ext;
+    const newFilename = `banners/${Date.now()}.${ext}`; // Store in the 'banners' directory
     await pbsports.send(new PutObjectCommand({
       Bucket: bucketName,
       Key: newFilename,
