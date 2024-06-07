@@ -71,6 +71,7 @@ export default function Banner() {
         )}
       </div>
     </div>
+  </Layout>
   );
 }
 
