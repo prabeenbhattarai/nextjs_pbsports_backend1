@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { ReactSortable } from 'react-sortablejs';
 import Image from 'next/image';
+import Layout from "@/components/layout";
 
 export default function Banner() {
   const [images, setImages] = useState([]);
@@ -40,6 +41,7 @@ export default function Banner() {
   };
 
   return (
+      <Layout>
     <div>
       <h1>Upload and Manage Banners</h1>
       <div className="mb-2 flex flex-wrap gap-1">
