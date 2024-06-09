@@ -28,6 +28,8 @@ const [title,setTitle] = useState(existingTitle || '');
     const [goToSchedule,setGoToSchedule] = useState(false);
     const [isUploading,setIsUploading] = useState(false);
     const [category,setCategory] = useState([]);
+        const [notification, setNotification] = useState({ show: false, message: '', type: '' });
+
     const router = useRouter();
 
     useEffect(() =>
@@ -50,6 +52,12 @@ const [title,setTitle] = useState(existingTitle || '');
             //create
  await axios.post('/api/schedule', data);
         }
+        setNotification({ show: true, message: "Schedule saved successfully!", type: 'success' });
+            setGoToSchedule(true);
+        } catch (error) {
+            setNotification({ show: true, message: "Failed to save schedule.", type: 'error' });
+        }
+    }
         
  setGoToSchedule(true);
     }
@@ -164,8 +172,9 @@ const [title,setTitle] = useState(existingTitle || '');
 </div>
 
 
-<button type="submit" className="btn-primary">Save </button>
-
+<button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Save 
+                </button>
 </form>
 
 
