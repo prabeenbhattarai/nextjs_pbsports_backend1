@@ -88,6 +88,13 @@ const [title,setTitle] = useState(existingTitle || '');
         setImages(images);
     }
     return (
+         {notification.show && (
+                <Notification
+                    message={notification.message}
+                    type={notification.type}
+                    onClose={() => setNotification({ show: false, message: '', type: '' })}
+                />
+            )}
       
   <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={saveSchedule}>
     <div class="flex flex-wrap -mx-3 mb-6">
