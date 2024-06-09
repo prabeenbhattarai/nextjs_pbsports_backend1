@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import { ReactSortable } from "react-sortablejs";
 import Image from 'next/image';
-import Notification from './Notification';
-
 
 
 
@@ -30,8 +28,6 @@ const [title,setTitle] = useState(existingTitle || '');
     const [goToSchedule,setGoToSchedule] = useState(false);
     const [isUploading,setIsUploading] = useState(false);
     const [category,setCategory] = useState([]);
-        const [notification, setNotification] = useState({ show: false, message: '', type: '' });
-
     const router = useRouter();
 
     useEffect(() =>
@@ -40,24 +36,20 @@ const [title,setTitle] = useState(existingTitle || '');
         setCategory(result.data);
       })
     }, []);
-   async function saveSchedule(ev) {
+    async function saveSchedule(ev){
         ev.preventDefault();
-        const data = { title, description, time, url, images, categories };
+        const data={title,description,time,url,images,categories};
 
-        try {
-            if (_id) {
-                // Update
-                await axios.put('/api/schedule', { ...data, _id });
-            } else {
-                // Create
-                await axios.post('/api/schedule', data);
-            }
-            setNotification({ show: true, message: "Schedule saved successfully!", type: 'success' });
-            setGoToSchedule(true);
-        } catch (error) {
-            setNotification({ show: true, message: "Failed to save schedule.", type: 'error' });
+
+        if(_id){
+            //update
+            await axios.put('/api/schedule', {...data,_id});
+
+
+        } else{
+            //create
+ await axios.post('/api/schedule', data);
         }
-    }
         
  setGoToSchedule(true);
     }
@@ -86,14 +78,6 @@ const [title,setTitle] = useState(existingTitle || '');
         setImages(images);
     }
     return (
-         <div>
-         {notification.show && (
-                <Notification
-                    message={notification.message}
-                    type={notification.type}
-                    onClose={() => setNotification({ show: false, message: '', type: '' })}
-                />
-            )}
       
   <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={saveSchedule}>
     <div class="flex flex-wrap -mx-3 mb-6">
@@ -180,11 +164,10 @@ const [title,setTitle] = useState(existingTitle || '');
 </div>
 
 
-<button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Save 
-                </button>
+<button type="submit" className="btn-primary">Save </button>
+
 </form>
-    </div>
+
 
 );
 };
