@@ -86,6 +86,7 @@ const [title,setTitle] = useState(existingTitle || '');
         setImages(images);
     }
     return (
+         <div>
          {notification.show && (
                 <Notification
                     message={notification.message}
@@ -183,7 +184,7 @@ const [title,setTitle] = useState(existingTitle || '');
                     Save 
                 </button>
 </form>
-
+    </div>
 
 );
 };
