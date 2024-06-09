@@ -40,21 +40,19 @@ const [title,setTitle] = useState(existingTitle || '');
         setCategory(result.data);
       })
     }, []);
-    async function saveSchedule(ev){
+   async function saveSchedule(ev) {
         ev.preventDefault();
-        const data={title,description,time,url,images,categories};
+        const data = { title, description, time, url, images, categories };
 
-
-        if(_id){
-            //update
-            await axios.put('/api/schedule', {...data,_id});
-
-
-        } else{
-            //create
- await axios.post('/api/schedule', data);
-        }
-        setNotification({ show: true, message: "Schedule saved successfully!", type: 'success' });
+        try {
+            if (_id) {
+                // Update
+                await axios.put('/api/schedule', { ...data, _id });
+            } else {
+                // Create
+                await axios.post('/api/schedule', data);
+            }
+            setNotification({ show: true, message: "Schedule saved successfully!", type: 'success' });
             setGoToSchedule(true);
         } catch (error) {
             setNotification({ show: true, message: "Failed to save schedule.", type: 'error' });
