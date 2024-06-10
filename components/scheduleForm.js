@@ -141,7 +141,7 @@ const [title,setTitle] = useState(existingTitle || '');
     <ReactSortable className="flex flex-wrap gap-1"list={images} setList={updateImagesOrder}>
 {!!images?.length && images.map(link =>(
     <div key={link} className=" h-24 ">
-       <Image src={link} width={500} height={500} alt="" className="rounded-lg"/>
+       <Image src={link} width={90} height={60} alt="" className="rounded-lg"/>
         </div>
     ))}
     </ReactSortable>
