@@ -19,6 +19,7 @@ export default function Schedule(){
                 <td> Event Name
                 </td>
                <td>Description</td>
+        <td>Category</td>
                 <td> Link
                 </td>
                 <td> Time
@@ -35,6 +36,7 @@ export default function Schedule(){
                 <tr key={schedule._id}>
                     <td>{schedule.title}</td>
                     <td>{schedule.description}</td>
+                <td>{schedule.categories}</td>
 <td> {schedule.url}</td>
 <td> {schedule.time}</td>
 
